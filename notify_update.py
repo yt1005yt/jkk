@@ -5,7 +5,7 @@ from datetime import datetime
 import pytz
 
 URL = "https://jkkwatcher.com/recentupdate/"
-LINE_TOKEN = "3cy6RmlkDHAwwTKxf47aGbBrkahjd4w0r6sLobN5cN7"
+LINE_TOKEN = "YOUR_ACTUAL_LINE_NOTIFY_TOKEN"
 JST = pytz.timezone('Asia/Tokyo')
 
 def get_page_content(url):
@@ -21,13 +21,16 @@ def get_page_content(url):
 def parse_content(content):
     soup = BeautifulSoup(content, 'html.parser')
     properties = []
-    for item in soup.select('tr'):  # Adjusted to select rows from the table
+    for item in soup.select('tbody tr'):  # Select rows within the tbody
         columns = item.find_all('td')
         if len(columns) >= 6:  # Ensure there are enough columns
-            name = columns[1].text.strip()  # Property name
-            type_ = columns[2].text.strip()  # Property type
-            category = columns[3].text.strip()  # Property category
-            properties.append((name, type_, category))
+            name = columns[0].text.strip()  # Property name
+            code = columns[1].text.strip()  # Property code
+            category = columns[2].text.strip()  # Property category
+            changes = columns[3].text.strip()  # Change number
+            update_time = columns[4].text.strip()  # Update time
+            region = columns[5].text.strip()  # Region
+            properties.append((name, code, category, changes, update_time, region))
     return properties
 
 def has_page_changed(current_properties, previous_properties):
@@ -68,7 +71,7 @@ while True:
             update_time = datetime.now(JST).strftime('%Y-%m-%d %H:%M:%S')
             message = f"物件情報が更新されました。\n更新日時: {update_time}\n変更数: {changes}\n\n"
             for prop in current_properties:
-                message += f"物件名: {prop[0]}, タイプ: {prop[1]}, 種別: {prop[2]}\n"
+                message += f"物件名: {prop[0]}, コード: {prop[1]}, 種別: {prop[2]}, 変更数: {prop[3]}, 更新日時: {prop[4]}, 地域: {prop[5]}\n"
             notify_via_line(message)
             print("LINE通知を送りました。")
 
