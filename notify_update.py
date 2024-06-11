@@ -5,7 +5,7 @@ from datetime import datetime
 import pytz
 
 URL = "https://jkkwatcher.com/recentupdate/"
-LINE_TOKEN = "YOUR_LINE_NOTIFY_TOKEN"
+LINE_TOKEN = "3cy6RmlkDHAwwTKxf47aGbBrkahjd4w0r6sLobN5cN7"
 JST = pytz.timezone('Asia/Tokyo')
 
 def get_page_content(url):
